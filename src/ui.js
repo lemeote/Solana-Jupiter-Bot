@@ -29,6 +29,13 @@ function printToConsole({
 			);
 			cache.chart.spottedMax.buy = spottetMaxTemp;
 		}
+
+		if (cache.ui.showPerformanceOfRouteCompChart) {
+			let performanceTemp = cache.chart.performanceOfRouteComp;
+			performanceTemp.shift();
+			performanceTemp.push(parseInt(performanceOfRouteComp.toFixed()));
+			cache.chart.performanceOfRouteComp = performanceTemp;
+		}
 	} catch (err) {
 		console.log(err);
 	}
