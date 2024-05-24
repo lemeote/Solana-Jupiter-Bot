@@ -36,6 +36,15 @@ function printToConsole({
 			performanceTemp.push(parseInt(performanceOfRouteComp.toFixed()));
 			cache.chart.performanceOfRouteComp = performanceTemp;
 		}
+        		// check swap status
+		let swapStatus;
+		if (cache.swappingRightNow) {
+			swapStatus = performance.now() - cache.performanceOfTxStart;
+		}
+
+		// refresh console before print
+		console.clear();
+		ui.resetOutput();
 	} catch (err) {
 		console.log(err);
 	}
