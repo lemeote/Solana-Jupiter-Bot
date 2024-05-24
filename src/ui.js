@@ -36,7 +36,7 @@ function printToConsole({
 			performanceTemp.push(parseInt(performanceOfRouteComp.toFixed()));
 			cache.chart.performanceOfRouteComp = performanceTemp;
 		}
-        		// check swap status
+		// check swap status
 		let swapStatus;
 		if (cache.swappingRightNow) {
 			swapStatus = performance.now() - cache.performanceOfTxStart;
@@ -45,6 +45,25 @@ function printToConsole({
 		// refresh console before print
 		console.clear();
 		ui.resetOutput();
+
+		if (cache.ui.showHelp) {
+			ui.div(
+				chalk.gray("[H] - show/hide help"),
+				chalk.gray("[CTRL]+[C] - exit"),
+				chalk.gray("[I] - incognito RPC")
+			);
+			ui.div(
+				chalk.gray("[L] - show/hide latency chart"),
+				chalk.gray("[P] - show/hide profit chart"),
+				chalk.gray("[T] - show/hide trade history")
+			);
+			ui.div(
+				chalk.gray("[E] - force execution"),
+				chalk.gray("[R] - revert back swap"),
+				chalk.gray("[S] - simulation mode switch")
+			);
+			ui.div(" ");
+		}
 	} catch (err) {
 		console.log(err);
 	}
