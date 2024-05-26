@@ -100,3 +100,65 @@ const swap = async (jupiter, route) => {
 		console.log("Swap error: ", error);
 	}
 };
+
+const successSwapHandler = (tx, tradeEntry, tokenA, tokenB) => {
+	// update counter
+	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
+
+	// update balance
+	if (cache.sideBuy) {
+		cache.lastBalance.tokenA = cache.currentBalance.tokenA;
+		cache.currentBalance.tokenA = 0;
+		cache.currentBalance.tokenB = tx.outputAmount;
+	} else {
+		cache.lastBalance.tokenB = cache.currentBalance.tokenB;
+		cache.currentBalance.tokenB = 0;
+		cache.currentBalance.tokenA = tx.outputAmount;
+	}
+
+	if (cache.firstSwap) {
+		cache.lastBalance.tokenB = tx.outputAmount;
+		cache.initialBalance.tokenB = tx.outputAmount;
+	}
+
+	// update profit
+	if (cache.sideBuy) {
+		cache.currentProfit.tokenA = 0;
+		cache.currentProfit.tokenB = calculateProfit(
+			cache.initialBalance.tokenB,
+			cache.currentBalance.tokenB
+		);
+	} else {
+		cache.currentProfit.tokenB = 0;
+		cache.currentProfit.tokenA = calculateProfit(
+			cache.initialBalance.tokenA,
+			cache.currentBalance.tokenA
+		);
+	}
+
+	// update trade history
+	let tempHistory = cache.tradeHistory || [];
+
+	tradeEntry.inAmount = toDecimal(
+		tx.inputAmount,
+		cache.sideBuy ? tokenA.decimals : tokenB.decimals
+	);
+	tradeEntry.outAmount = toDecimal(
+		tx.outputAmount,
+		cache.sideBuy ? tokenB.decimals : tokenA.decimals
+	);
+
+	tradeEntry.profit = calculateProfit(
+		cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"],
+		tx.outputAmount
+	);
+
+	tempHistory.push(tradeEntry);
+	cache.tradeHistory = tempHistory;
+
+	// first swap done
+	if (cache.firstSwap) {
+		cache.firstSwap = false;
+		cache.firstSwapInQueue = false;
+	}
+};
