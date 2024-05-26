@@ -137,6 +137,20 @@ const App = (props) => {
 			</DefaultBox>
 		);
 
+	if (!tradingMode)
+		return (
+			<DefaultBox>
+				<Text>
+					Choose <Text color="cyan">Trading Mode</Text>:
+				</Text>
+				<SelectInput
+					items={tradingModes}
+					onSelect={(item) => setTradingMode(item.value)}
+				/>
+				<EscNotification />
+			</DefaultBox>
+		);
+
 	if (!readyToStart) {
 		return (
 			<DefaultBox>
