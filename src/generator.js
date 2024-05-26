@@ -96,6 +96,47 @@ const App = (props) => {
 			</DefaultBox>
 		);
 
+	if (!isRpcsSet)
+		return (
+			<DefaultBox>
+				<Text>
+					Paste Solana <Text color="magenta">RPC</Text>:
+				</Text>
+				<TextInput
+					onChange={(url) => setRpcURL(url)}
+					value={rpcURL || ""}
+					placeholder={
+						process.env.DEFAULT_RPC
+							? process.env.DEFAULT_RPC
+							: "https://my-super-expensive-quick-af-rpc.com"
+					}
+					onSubmit={(url) => {
+						setRpc([...rpc, url]);
+						setRpcURL("");
+					}}
+				/>
+				<Newline />
+				{rpc.map((url, index) => (
+					<Text
+						color={index === 0 ? "yellowBright" : "green"}
+						dimColor={index === 0 ? false : true}
+						key={index}
+					>
+						<Text color="gray">{index === 0 ? "MAIN" : `${index + 1}. `}</Text>{" "}
+						{url}
+					</Text>
+				))}
+				<Box justifyContent="space-between">
+					{process.env.DEFAULT_RPC && rpc.length === 0 && (
+						<TabNotification skip={true} />
+					)}
+					{rpc.length > 0 && <TabNotification />}
+
+					<EscNotification />
+				</Box>
+			</DefaultBox>
+		);
+
 	return <DefaultBox></DefaultBox>;
 };
 
