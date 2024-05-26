@@ -67,6 +67,21 @@ const App = (props) => {
 		}
 	});
 
+	const { setRawMode } = useStdin();
+
+	useEffect(() => {
+		setRawMode(true);
+
+		return () => {
+			setRawMode(false);
+		};
+	});
+
+	useEffect(() => {
+		network != "" &&
+			axios.get(TOKEN_LIST_URL[network]).then((res) => setTokens(res.data));
+	}, [network]);
+
 	return <DefaultBox></DefaultBox>;
 };
 
