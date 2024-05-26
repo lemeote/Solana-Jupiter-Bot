@@ -383,3 +383,24 @@ const pingpongMode = async (jupiter, tokenA, tokenB) => {
 		delete cache.queue[i];
 	}
 };
+
+const watcher = async (jupiter, tokenA, tokenB) => {
+	if (!cache.swappingRightNow) {
+		if (cache.firstSwap && Object.keys(cache.queue).length === 0) {
+			const firstSwapSpinner = ora({
+				text: "Executing first swap...",
+				discardStdin: false,
+			}).start();
+			await pingpongMode(jupiter, tokenA, tokenB);
+			if (cache.firstSwap) firstSwapSpinner.fail("First swap failed!");
+			else firstSwapSpinner.stop();
+		} else if (
+			!cache.firstSwap &&
+			!cache.firstSwapInQueue &&
+			Object.keys(cache.queue).length < cache.queueThrottle &&
+			cache.tradingMode === "pingpong"
+		) {
+			await pingpongMode(jupiter, tokenA, tokenB);
+		}
+	}
+};
