@@ -137,6 +137,177 @@ const App = (props) => {
 			</DefaultBox>
 		);
 
+	if (!readyToStart) {
+		return (
+			<DefaultBox>
+				<Text>Config</Text>
+				<Text>
+					Network: <Text color="magenta">{network}</Text>
+				</Text>
+				<Text>
+					Trading Mode: <Text color="cyan">{tradingMode}</Text>
+				</Text>
+				{tokens?.length > 0 ? (
+					<>
+						<Text>
+							Available Tokens:{" "}
+							<Text color="yellowBright">{tokens?.length || 0}</Text>
+						</Text>
+
+						{/* SET TOKEN A */}
+						<Text>
+							Token A:{" "}
+							{!tokenAisSet ? (
+								<>
+									<TextInput
+										value={tokenA?.symbol || ""}
+										onChange={(value) => setTokenA({ symbol: value })}
+										placeholder="type token symbol & use arrow keys to select hint"
+										focus={!tokenAisSet}
+										onSubmit={() => setTokenAisSet(true)}
+									/>
+									<Text color="gray"> Case Sensitive!</Text>
+								</>
+							) : (
+								<Text color="cyan">{tokenA?.symbol}</Text>
+							)}
+						</Text>
+
+						{tokenA?.symbol?.length > 1 && !tokenA?.address && (
+							<SelectInput
+								items={tokens
+									.map((t) => ({ label: t.symbol, value: t.address }))
+									.filter((t) => t.label.includes(tokenA.symbol))}
+								limit={4}
+								onSelect={(s) => setTokenA({ ...tokenA, address: s.value })}
+							/>
+						)}
+						{tokenA?.address && (
+							<Text>
+								Token A Address:{" "}
+								<Text color="yellowBright">{tokenA?.address}</Text>
+							</Text>
+						)}
+
+						{/* SET TOKEN B */}
+						<Text>
+							Token B:{" "}
+							{!tokenBisSet ? (
+								<>
+									<TextInput
+										value={tokenB?.symbol || ""}
+										onChange={(value) => setTokenB({ symbol: value })}
+										placeholder="type token symbol & use arrow keys to select hint"
+										focus={
+											tokenB?.address ? false : tokenA?.address ? true : false
+										}
+										onSubmit={() => setTokenBisSet(true)}
+									/>
+									<Text color="gray"> Case Sensitive!</Text>
+								</>
+							) : (
+								<Text color="cyan">{tokenB?.symbol}</Text>
+							)}
+						</Text>
+						{tokenB?.symbol?.length > 1 &&
+							tokenA?.address &&
+							!tokenB?.address && (
+								<SelectInput
+									items={tokens
+										.map((t) => ({ label: t.symbol, value: t.address }))
+										.filter((t) => t.label.includes(tokenB.symbol))}
+									limit={4}
+									onSelect={(s) => setTokenB({ ...tokenB, address: s.value })}
+								/>
+							)}
+						{tokenB?.address && (
+							<Text>
+								Token B Address:{" "}
+								<Text color="yellowBright">{tokenB?.address}</Text>
+							</Text>
+						)}
+					</>
+				) : (
+					<Text>
+						Available Tokens: <Spinner type="dots" />
+					</Text>
+				)}
+				<Newline />
+
+				{tokenAisSet && tokenBisSet && (
+					<Box flexDirection={tradingEnabled === undefined ? "column" : "row"}>
+						<Text>Allow Trading: </Text>
+						{tradingEnabled === undefined ? (
+							<SelectInput
+								items={[
+									{ label: "true", value: true },
+									{ label: "false", value: false },
+								]}
+								onSelect={(item) => setTradingEnabled(item.value)}
+								itemComponent={(item) => (
+									<Text color={tradingEnabled == item.value ? "cyan" : "gray"}>
+										{item.label}
+									</Text>
+								)}
+								onHighlight={(item) => (
+									<Text color={tradingEnabled == item.value ? "cyan" : "gray"}>
+										{tradingEnabled == item.value ? ">" : " "}
+										{item.label}
+									</Text>
+								)}
+							/>
+						) : (
+							<Text color="cyan">{tradingEnabled ? "true" : "false"}</Text>
+						)}
+					</Box>
+				)}
+
+				{tokenAisSet && tokenBisSet && tradingEnabled !== undefined && (
+					<>
+						<Box>
+							<Text>Min. % Profit: </Text>
+							{!isMinPercProfitSet ? (
+								<TextInput
+									value={minPercProfit || ""}
+									onChange={(value) => setMinPercProfit(value)}
+									placeholder="example 0.10"
+									onSubmit={() => setIsMinPercProfitSet(true)}
+								/>
+							) : (
+								<Text color="cyan">{minPercProfit}</Text>
+							)}
+						</Box>
+
+						{isMinPercProfitSet && (
+							<Box>
+								<Text>Trade Size: </Text>
+								<TextInput
+									value={tradeSize || ""}
+									onChange={(value) => setTradeSize(value)}
+									placeholder="example 0.10"
+									onSubmit={() => setReadyToStart(true)}
+								/>
+							</Box>
+						)}
+					</>
+				)}
+
+				<EscNotification />
+			</DefaultBox>
+		);
+	}
+
+	if (readyToStart) {
+		return (
+			<DefaultBox>
+				<Gradient name="atlas">
+					<BigText text="press enter" />
+					<BigText text="to start" />
+				</Gradient>
+			</DefaultBox>
+		);
+	}
+
 	return <DefaultBox></DefaultBox>;
 };
 
