@@ -82,6 +82,20 @@ const App = (props) => {
 			axios.get(TOKEN_LIST_URL[network]).then((res) => setTokens(res.data));
 	}, [network]);
 
+	if (!network)
+		return (
+			<DefaultBox>
+				<Text>
+					Select Solana <Text color="magenta">Network</Text>:
+				</Text>
+				<SelectInput
+					items={networks}
+					onSelect={(item) => setNetwork(item.value)}
+				/>
+				<EscNotification />
+			</DefaultBox>
+		);
+
 	return <DefaultBox></DefaultBox>;
 };
 
