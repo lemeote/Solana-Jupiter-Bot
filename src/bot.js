@@ -101,6 +101,25 @@ const swap = async (jupiter, route) => {
 	}
 };
 
+const failedSwapHandler = (tx, tradeEntry, route) => {
+	const msg = tx.error.message;
+
+	// update counter
+	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].fail++;
+
+	// update trade history
+	config.storeFailedTxInHistory;
+
+	// update trade history
+	let tempHistory = cache.tradeHistory || [];
+	tempHistory.push(tradeEntry);
+	cache.tradeHistory = tempHistory;
+
+	// add AMM to blockedAMMs
+	const marketInfos = JSON.parse(JSON.stringify(route.marketInfos, null, 2));
+	// TODO: add AMM to blockedAMMs if there is error called "Unknown"
+};
+
 const successSwapHandler = (tx, tradeEntry, tokenA, tokenB) => {
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
