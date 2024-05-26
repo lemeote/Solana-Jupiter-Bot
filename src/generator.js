@@ -1,17 +1,34 @@
 "use strict";
 
-const DefaultBox = require("../Components/DefaultBox");
-
 require("dotenv").config();
 const React = require("react");
-const { useState, useEffect } = require("react");
-const fs = requrie("fs");
 const { Text, Box, useApp, useInput, Newline, useStdin } = require("ink");
+const { useState, useEffect } = require("react");
 const { default: SelectInput } = require("ink-select-input");
+const fs = require("fs");
 
-const tradingNodes = [
+// import components
+const importJsx = require("import-jsx");
+const { default: axios } = require("axios");
+const { TOKEN_LIST_URL } = require("@jup-ag/core");
+const { default: Spinner } = require("ink-spinner");
+const { default: TextInput } = require("ink-text-input");
+const BigText = require("ink-big-text");
+const Gradient = require("ink-gradient");
+const DefaultBox = importJsx("../Components/DefaultBox");
+
+const EscNotification = importJsx("../Components/EscNotification");
+const TabNotification = importJsx("../Components/TabNotification");
+
+const networks = [
+	{ label: "mainnet-beta", value: "mainnet-beta" },
+	{ label: "testnet", value: "testnet" },
+	{ label: "devnet", value: "devnet" },
+];
+
+const tradingModes = [
 	{ label: "pingpong", value: "pingpong" },
-	{ lable: "arbitrage (coming soon)", value: " arbitrage" },
+	{ label: "arbitrage (coming soon)", value: "arbitrage" },
 ];
 
 const App = (props) => {
