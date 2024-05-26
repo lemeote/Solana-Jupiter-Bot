@@ -84,5 +84,19 @@ const cache = {
 };
 
 const swap = async (jupiter, route) => {
-    
-}
+	try {
+		const performanceOfTxStart = performance.now();
+		cache.performanceOfTxStart = performanceOfTxStart;
+
+		const { execute } = await jupiter.exchange({
+			routeInfo: route,
+		});
+		const result = await execute();
+
+		const performanceOfTx = performance.now() - performanceOfTxStart;
+
+		return [result, performanceOfTx];
+	} catch (error) {
+		console.log("Swap error: ", error);
+	}
+};
