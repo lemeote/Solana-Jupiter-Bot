@@ -404,3 +404,88 @@ const watcher = async (jupiter, tokenA, tokenB) => {
 		}
 	}
 };
+
+const run = async () => {
+	try {
+		const setupSpinner = ora({
+			text: "Setting up...",
+			discardStdin: false,
+		}).start();
+		const { jupiter, tokenA, tokenB, blockedAMMs } = await setup(config);
+		setupSpinner.succeed("Setup done!");
+
+		// load blocked AMMs to cache
+		cache.blockedAMMs = blockedAMMs;
+
+		// set initial & last balance for tokenA
+		cache.initialBalance.tokenA = toNumber(config.tradeSize, tokenA.decimals);
+		cache.currentBalance.tokenA = cache.initialBalance.tokenA;
+		cache.lastBalance.tokenA = cache.initialBalance.tokenA;
+
+		setInterval(() => watcher(jupiter, tokenA, tokenB), config.minInterval);
+
+		// hotkeys
+		keypress(process.stdin);
+
+		process.stdin.on("keypress", function (ch, key) {
+			// console.log('got "keypress"', key);
+			if (key && key.ctrl && key.name == "c") {
+				cache.tradingEnabled = false; // stop all trades
+				console.log("[CTRL] + [C] PRESS AGAIN TO EXIT!");
+				process.stdin.pause();
+				process.stdin.setRawMode(false);
+				process.stdin.resume();
+			}
+
+			// [E] - forced execution
+			if (key && key.name === "e") {
+				cache.hotkeys.e = true;
+			}
+
+			// [R] - revert back swap
+			if (key && key.name === "r") {
+				cache.hotkeys.r = true;
+			}
+
+			// [P] - switch profit chart visibility
+			if (key && key.name === "p") {
+				cache.ui.showProfitChart = !cache.ui.showProfitChart;
+			}
+
+			// [L] - switch performance chart visibility
+			if (key && key.name === "l") {
+				cache.ui.showPerformanceOfRouteCompChart =
+					!cache.ui.showPerformanceOfRouteCompChart;
+			}
+
+			// [H] - switch trade history visibility
+			if (key && key.name === "t") {
+				cache.ui.showTradeHistory = !cache.ui.showTradeHistory;
+			}
+
+			// [I] - incognito mode (hide RPC)
+			if (key && key.name === "i") {
+				cache.ui.hideRpc = !cache.ui.hideRpc;
+			}
+
+			// [H] - switch help visibility
+			if (key && key.name === "h") {
+				cache.ui.showHelp = !cache.ui.showHelp;
+			}
+
+			// [S] - simulation mode switch
+			if (key && key.name === "s") {
+				cache.tradingEnabled = !cache.tradingEnabled;
+			}
+		});
+
+		process.stdin.setRawMode(true);
+		process.stdin.resume();
+	} catch (error) {
+		console.log(error);
+	} finally {
+		handleExit(config, cache);
+	}
+};
+
+run();
