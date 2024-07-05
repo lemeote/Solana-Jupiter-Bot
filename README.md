@@ -22,13 +22,6 @@ CLI UI have current simulated profit chart and latency chart. Latency chart show
 
 All trades are stored in trades history and will be shown in the table. Table is limited to 5 entries, but history stores all trades.
 
-💡 UI elements can be hidden or shown using hotkeys (read below).
-
-> THIS README IS NOT COMPLETED YET.
-
-![](https://github.com/pmioduszewski/solana-jupiter-bot/blob/main/gif1.gif)
-![](https://github.com/pmioduszewski/solana-jupiter-bot/blob/main/gif2.gif)
-
 ## Install
 
 ```bash
